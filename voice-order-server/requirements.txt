@@ -1,0 +1,6 @@
+grpcio==1.58.0
+grpcio-tools==1.58.0
+google-generativeai==0.3.2
+SpeechRecognition==3.10.1
+pyaudio==0.2.14
+python-dotenv==1.0.1 
