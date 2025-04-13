@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 
 @Controller
 public class OrderController {
@@ -26,23 +27,29 @@ public class OrderController {
 
     @GetMapping("/")
     public String index(Model model) {
-        model.addAttribute("message", "Please upload an audio file");
-        return "index";
+        model.addAttribute("message", "Click the button below to start recording");
+        return "record";
     }
 
     @PostMapping("/process")
-    public String processAudio(@RequestParam("audio") MultipartFile file, Model model) {
+    public String processAudio(@RequestParam("audio") String base64Audio, Model model) {
         try {
-            byte[] audioData = file.getBytes();
-            AudioOrderResponse response = orderClient.processAudioOrder(audioData, "wav");
+            // Decode base64 audio data
+            byte[] audioData = Base64.getDecoder().decode(base64Audio);
+            
+            // Process with webm format
+            AudioOrderResponse response = orderClient.processAudioOrder(audioData, "webm");
 
             model.addAttribute("status", response.getStatus());
             model.addAttribute("message", response.getMessage());
             model.addAttribute("products", response.getProductsList());
             model.addAttribute("errors", response.getProductsErrorList());
 
-        } catch (IOException e) {
-            model.addAttribute("error", "Error processing audio file: " + e.getMessage());
+        } catch (Exception e) {
+            model.addAttribute("status", "ERROR");
+            model.addAttribute("message", "Error processing audio: " + e.getMessage());
+            model.addAttribute("products", null);
+            model.addAttribute("errors", null);
         }
 
         return "result";
