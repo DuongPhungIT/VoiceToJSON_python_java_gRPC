@@ -1,0 +1,151 @@
+2025-04-14 13:28:42,406 - INFO - Starting gRPC server...
+2025-04-14 13:28:42,409 - INFO - VoiceServiceServicer initialized with menu: {'coca cola': '1001', 'pepsi': '1002', '7up': '1003', 'fanta': '1004', 'sprite': '1005', 'mirinda': '1006', 'sting': '1007', 'number one': '1008', 'revive': '1009', 'tiger': '1010', 'heineken': '1011', 'saigon': '1012', '333': '1013', 'huda': '1014', 'larue': '1015', 'hanoi': '1016', 'bia hơi': '1017', 'bia tươi': '1017', 'bia đen': '1018', 'bia nâu': '1019', 'bia đỏ': '1020', 'bia vàng': '1021', 'bia trắng': '1022', 'bia xanh': '1023', 'bia tím': '1024', 'bia hồng': '1025', 'bia cam': '1026', 'bia lục': '1027', 'bia lam': '1028', 'bia chai': '1029', 'bia lon': '1030', 'bia thùng': '1031', 'bia két': '1032', 'bia bock': '1033', 'bia pilsner': '1034', 'bia lager': '1035', 'bia ale': '1036', 'bia stout': '1037', 'bia porter': '1038', 'bia wheat': '1039', 'bia ipa': '1040', 'bia apa': '1050'}
+2025-04-14 13:28:42,412 - INFO - Server started on port 50051
+2025-04-14 13:28:56,087 - INFO - Received connection from client: ipv4:127.0.0.1:57306
+2025-04-14 13:28:56,088 - INFO - Audio data length: 23501 bytes
+2025-04-14 13:28:56,089 - INFO - Audio data length: 23501 bytes
+2025-04-14 13:28:56,091 - INFO - Saved audio data to temp_audio.webm
+2025-04-14 13:28:56,091 - INFO - Starting audio conversion
+2025-04-14 13:28:56,093 - INFO - Saved input audio to: /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmpzv8q7a8p.webm
+2025-04-14 13:28:56,094 - INFO - Output WAV will be saved to: /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmpzv8q7a8p.wav
+2025-04-14 13:28:56,094 - INFO - Running ffmpeg command: ffmpeg -i /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmpzv8q7a8p.webm -acodec pcm_s16le -ar 16000 -ac 1 -y /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmpzv8q7a8p.wav
+2025-04-14 13:28:56,310 - INFO - Successfully converted to WAV format, length: 46158 bytes
+2025-04-14 13:28:56,311 - INFO - Converted to WAV format, length: 46158 bytes
+2025-04-14 13:28:56,311 - INFO - Saved WAV data to temp_audio.wav
+2025-04-14 13:28:56,311 - INFO - Starting speech recognition
+2025-04-14 13:28:56,311 - INFO - Audio data type: <class 'bytes'>
+2025-04-14 13:28:56,311 - INFO - Audio data length: 46158 bytes
+2025-04-14 13:28:56,311 - INFO - Saved audio data to debug_audio.wav for inspection
+2025-04-14 13:28:56,311 - INFO - Adjusting for ambient noise...
+2025-04-14 13:28:56,312 - INFO - Recording audio...
+2025-04-14 13:28:56,312 - INFO - Audio recorded successfully
+2025-04-14 13:28:56,312 - INFO - Recognizing speech...
+2025-04-14 13:29:01,556 - INFO - Speech recognition completed with Vietnamese: 'bia đá'
+2025-04-14 13:29:01,556 - INFO - Converted audio to text: 'bia đá'
+2025-04-14 13:29:01,556 - INFO - Processing order text with Gemini: 'bia đá'
+2025-04-14 13:29:01,557 - INFO - Sending prompt to Gemini: 
+            Phân tích đơn hàng sau và trả về danh sách sản phẩm theo format JSON:
+            Đơn hàng: bia đá
+            
+            Menu sản phẩm: {'coca cola': '1001', 'pepsi': '1002', '7up': '1003', 'fanta': '1004', 'sprite': '1005', 'mirinda': '1006', 'sting': '1007', 'number one': '1008', 'revive': '1009', 'tiger': '1010', 'heineken': '1011', 'saigon': '1012', '333': '1013', 'huda': '1014', 'larue': '1015', 'hanoi': '1016', 'bia hơi': '1017', 'bia tươi': '1017', 'bia đen': '1018', 'bia nâu': '1019', 'bia đỏ': '1020', 'bia vàng': '1021', 'bia trắng': '1022', 'bia xanh': '1023', 'bia tím': '1024', 'bia hồng': '1025', 'bia cam': '1026', 'bia lục': '1027', 'bia lam': '1028', 'bia chai': '1029', 'bia lon': '1030', 'bia thùng': '1031', 'bia két': '1032', 'bia bock': '1033', 'bia pilsner': '1034', 'bia lager': '1035', 'bia ale': '1036', 'bia stout': '1037', 'bia porter': '1038', 'bia wheat': '1039', 'bia ipa': '1040', 'bia apa': '1050'}
+            
+            Format trả về:
+            {
+                "products": [
+                    {
+                        "name": "tên sản phẩm",
+                        "sap_code": "mã SAP",
+                        "quantity": số lượng
+                    }
+                ],
+                "products_error": [
+                    {
+                        "name": "tên sản phẩm không tìm thấy",
+                        "quantity": số lượng
+                    }
+                ]
+            }
+            
+2025-04-14 13:29:04,567 - WARNING - Compute Engine Metadata server unavailable on attempt 1 of 3. Reason: timed out
+2025-04-14 13:29:08,542 - WARNING - Compute Engine Metadata server unavailable on attempt 2 of 3. Reason: timed out
+2025-04-14 13:29:10,706 - WARNING - Compute Engine Metadata server unavailable on attempt 3 of 3. Reason: [Errno 64] Host is down
+2025-04-14 13:29:10,706 - WARNING - Authentication failed using Compute Engine authentication due to unavailable metadata server.
+2025-04-14 13:29:10,706 - ERROR - Error processing order with Gemini: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+Traceback (most recent call last):
+  File "/Users/phungduong/Documents/Kido Documents/python/VoiceToJSON_python_java_gRPC/voice-order-server/server.py", line 273, in process_order
+    response = model.generate_content(prompt)
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/generativeai/generative_models.py", line 241, in generate_content
+    self._client = client.get_default_generative_client()
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/generativeai/client.py", line 230, in get_default_generative_client
+    return _client_manager.get_default_client("generative")
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/generativeai/client.py", line 161, in get_default_client
+    client = self.make_client(name)
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/generativeai/client.py", line 121, in make_client
+    client = cls(**self.client_config)
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/ai/generativelanguage_v1beta/services/generative_service/client.py", line 433, in __init__
+    self._transport = Transport(
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/ai/generativelanguage_v1beta/services/generative_service/transports/grpc.py", line 150, in __init__
+    super().__init__(
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/ai/generativelanguage_v1beta/services/generative_service/transports/base.py", line 98, in __init__
+    credentials, _ = google.auth.default(
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/auth/_default.py", line 719, in default
+    raise exceptions.DefaultCredentialsError(_CLOUD_SDK_MISSING_CREDENTIALS)
+google.auth.exceptions.DefaultCredentialsError: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-04-14 13:29:10,712 - INFO - Using fallback method to process order text: 'bia đá'
+2025-04-14 13:29:10,713 - INFO - Split text into words: ['bia', 'đá']
+2025-04-14 13:29:10,713 - INFO - Fallback order processing completed - Products: [], Errors: []
+2025-04-14 13:29:10,713 - INFO - Processed order - Products: [], Errors: []
+2025-04-14 13:29:20,466 - INFO - Received connection from client: ipv4:127.0.0.1:57306
+2025-04-14 13:29:20,467 - INFO - Audio data length: 30296 bytes
+2025-04-14 13:29:20,467 - INFO - Audio data length: 30296 bytes
+2025-04-14 13:29:20,467 - INFO - Saved audio data to temp_audio.webm
+2025-04-14 13:29:20,468 - INFO - Starting audio conversion
+2025-04-14 13:29:20,468 - INFO - Saved input audio to: /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmpy23dzgff.webm
+2025-04-14 13:29:20,468 - INFO - Output WAV will be saved to: /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmpy23dzgff.wav
+2025-04-14 13:29:20,469 - INFO - Running ffmpeg command: ffmpeg -i /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmpy23dzgff.webm -acodec pcm_s16le -ar 16000 -ac 1 -y /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmpy23dzgff.wav
+2025-04-14 13:29:20,662 - INFO - Successfully converted to WAV format, length: 59598 bytes
+2025-04-14 13:29:20,662 - INFO - Converted to WAV format, length: 59598 bytes
+2025-04-14 13:29:20,663 - INFO - Saved WAV data to temp_audio.wav
+2025-04-14 13:29:20,663 - INFO - Starting speech recognition
+2025-04-14 13:29:20,663 - INFO - Audio data type: <class 'bytes'>
+2025-04-14 13:29:20,663 - INFO - Audio data length: 59598 bytes
+2025-04-14 13:29:20,663 - INFO - Saved audio data to debug_audio.wav for inspection
+2025-04-14 13:29:20,663 - INFO - Adjusting for ambient noise...
+2025-04-14 13:29:20,663 - INFO - Recording audio...
+2025-04-14 13:29:20,663 - INFO - Audio recorded successfully
+2025-04-14 13:29:20,663 - INFO - Recognizing speech...
+2025-04-14 13:29:21,318 - INFO - Speech recognition completed with Vietnamese: 'bia đỏ'
+2025-04-14 13:29:21,319 - INFO - Converted audio to text: 'bia đỏ'
+2025-04-14 13:29:21,319 - INFO - Processing order text with Gemini: 'bia đỏ'
+2025-04-14 13:29:21,319 - INFO - Sending prompt to Gemini: 
+            Phân tích đơn hàng sau và trả về danh sách sản phẩm theo format JSON:
+            Đơn hàng: bia đỏ
+            
+            Menu sản phẩm: {'coca cola': '1001', 'pepsi': '1002', '7up': '1003', 'fanta': '1004', 'sprite': '1005', 'mirinda': '1006', 'sting': '1007', 'number one': '1008', 'revive': '1009', 'tiger': '1010', 'heineken': '1011', 'saigon': '1012', '333': '1013', 'huda': '1014', 'larue': '1015', 'hanoi': '1016', 'bia hơi': '1017', 'bia tươi': '1017', 'bia đen': '1018', 'bia nâu': '1019', 'bia đỏ': '1020', 'bia vàng': '1021', 'bia trắng': '1022', 'bia xanh': '1023', 'bia tím': '1024', 'bia hồng': '1025', 'bia cam': '1026', 'bia lục': '1027', 'bia lam': '1028', 'bia chai': '1029', 'bia lon': '1030', 'bia thùng': '1031', 'bia két': '1032', 'bia bock': '1033', 'bia pilsner': '1034', 'bia lager': '1035', 'bia ale': '1036', 'bia stout': '1037', 'bia porter': '1038', 'bia wheat': '1039', 'bia ipa': '1040', 'bia apa': '1050'}
+            
+            Format trả về:
+            {
+                "products": [
+                    {
+                        "name": "tên sản phẩm",
+                        "sap_code": "mã SAP",
+                        "quantity": số lượng
+                    }
+                ],
+                "products_error": [
+                    {
+                        "name": "tên sản phẩm không tìm thấy",
+                        "quantity": số lượng
+                    }
+                ]
+            }
+            
+2025-04-14 13:29:21,321 - WARNING - Compute Engine Metadata server unavailable on attempt 1 of 3. Reason: [Errno 64] Host is down
+2025-04-14 13:29:22,319 - WARNING - Compute Engine Metadata server unavailable on attempt 2 of 3. Reason: [Errno 64] Host is down
+2025-04-14 13:29:24,203 - WARNING - Compute Engine Metadata server unavailable on attempt 3 of 3. Reason: [Errno 64] Host is down
+2025-04-14 13:29:24,203 - WARNING - Authentication failed using Compute Engine authentication due to unavailable metadata server.
+2025-04-14 13:29:24,203 - ERROR - Error processing order with Gemini: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+Traceback (most recent call last):
+  File "/Users/phungduong/Documents/Kido Documents/python/VoiceToJSON_python_java_gRPC/voice-order-server/server.py", line 273, in process_order
+    response = model.generate_content(prompt)
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/generativeai/generative_models.py", line 241, in generate_content
+    self._client = client.get_default_generative_client()
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/generativeai/client.py", line 230, in get_default_generative_client
+    return _client_manager.get_default_client("generative")
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/generativeai/client.py", line 161, in get_default_client
+    client = self.make_client(name)
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/generativeai/client.py", line 121, in make_client
+    client = cls(**self.client_config)
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/ai/generativelanguage_v1beta/services/generative_service/client.py", line 433, in __init__
+    self._transport = Transport(
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/ai/generativelanguage_v1beta/services/generative_service/transports/grpc.py", line 150, in __init__
+    super().__init__(
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/ai/generativelanguage_v1beta/services/generative_service/transports/base.py", line 98, in __init__
+    credentials, _ = google.auth.default(
+  File "/Users/phungduong/.pyenv/versions/3.9.5/lib/python3.9/site-packages/google/auth/_default.py", line 719, in default
+    raise exceptions.DefaultCredentialsError(_CLOUD_SDK_MISSING_CREDENTIALS)
+google.auth.exceptions.DefaultCredentialsError: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-04-14 13:29:24,204 - INFO - Using fallback method to process order text: 'bia đỏ'
+2025-04-14 13:29:24,204 - INFO - Split text into words: ['bia', 'đỏ']
+2025-04-14 13:29:24,204 - INFO - Fallback order processing completed - Products: [], Errors: []
+2025-04-14 13:29:24,204 - INFO - Processed order - Products: [], Errors: []

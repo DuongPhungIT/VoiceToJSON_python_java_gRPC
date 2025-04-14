@@ -11,6 +11,7 @@ import wave
 from datetime import datetime
 import tempfile
 import subprocess
+import json
 
 # Configure logging
 log_dir = "logs"
@@ -241,7 +242,59 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
 
     def process_order(self, text):
         try:
-            logger.info("Processing order text: '%s'", text)
+            logger.info("Processing order text with Gemini: '%s'", text)
+            
+            # Use Gemini to process the text
+            prompt = f"""
+            Phân tích đơn hàng sau và trả về danh sách sản phẩm theo format JSON:
+            Đơn hàng: {text}
+            
+            Menu sản phẩm: {self.menu}
+            
+            Format trả về:
+            {{
+                "products": [
+                    {{
+                        "name": "tên sản phẩm",
+                        "sap_code": "mã SAP",
+                        "quantity": số lượng
+                    }}
+                ],
+                "products_error": [
+                    {{
+                        "name": "tên sản phẩm không tìm thấy",
+                        "quantity": số lượng
+                    }}
+                ]
+            }}
+            """
+            
+            logger.info("Sending prompt to Gemini: %s", prompt)
+            response = model.generate_content(prompt)
+            logger.info("Received response from Gemini: %s", response.text)
+            
+            try:
+                # Parse Gemini response
+                result = json.loads(response.text)
+                products = result.get("products", [])
+                products_error = result.get("products_error", [])
+                
+                logger.info("Order processing completed - Products: %s, Errors: %s", products, products_error)
+                return products, products_error
+            except json.JSONDecodeError:
+                logger.error("Failed to parse Gemini response as JSON: %s", response.text)
+                # Fallback to original processing if Gemini fails
+                return self._process_order_fallback(text)
+                
+        except Exception as e:
+            logger.error("Error processing order with Gemini: %s", str(e), exc_info=True)
+            # Fallback to original processing if Gemini fails
+            return self._process_order_fallback(text)
+
+    def _process_order_fallback(self, text):
+        """Fallback method for processing orders when Gemini fails"""
+        try:
+            logger.info("Using fallback method to process order text: '%s'", text)
             products = []
             products_error = []
             
@@ -284,10 +337,10 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
                 else:
                     i += 1
             
-            logger.info("Order processing completed - Products: %s, Errors: %s", products, products_error)
+            logger.info("Fallback order processing completed - Products: %s, Errors: %s", products, products_error)
             return products, products_error
         except Exception as e:
-            logger.error("Error processing order: %s", str(e), exc_info=True)
+            logger.error("Error in fallback order processing: %s", str(e), exc_info=True)
             raise
 
 def serve():
