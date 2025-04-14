@@ -15,29 +15,29 @@ public final class OrderServiceGrpc {
   public static final java.lang.String SERVICE_NAME = "com.voiceorder.orderservice.OrderService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest,
-      com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse> getProcessAudioOrderMethod;
+  private static volatile io.grpc.MethodDescriptor<com.voiceorder.orderservice.AudioOrderRequest,
+      com.voiceorder.orderservice.AudioOrderResponse> getProcessAudioOrderMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "ProcessAudioOrder",
-      requestType = com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest.class,
-      responseType = com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse.class,
+      requestType = com.voiceorder.orderservice.AudioOrderRequest.class,
+      responseType = com.voiceorder.orderservice.AudioOrderResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest,
-      com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse> getProcessAudioOrderMethod() {
-    io.grpc.MethodDescriptor<com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest, com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse> getProcessAudioOrderMethod;
+  public static io.grpc.MethodDescriptor<com.voiceorder.orderservice.AudioOrderRequest,
+      com.voiceorder.orderservice.AudioOrderResponse> getProcessAudioOrderMethod() {
+    io.grpc.MethodDescriptor<com.voiceorder.orderservice.AudioOrderRequest, com.voiceorder.orderservice.AudioOrderResponse> getProcessAudioOrderMethod;
     if ((getProcessAudioOrderMethod = OrderServiceGrpc.getProcessAudioOrderMethod) == null) {
       synchronized (OrderServiceGrpc.class) {
         if ((getProcessAudioOrderMethod = OrderServiceGrpc.getProcessAudioOrderMethod) == null) {
           OrderServiceGrpc.getProcessAudioOrderMethod = getProcessAudioOrderMethod =
-              io.grpc.MethodDescriptor.<com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest, com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse>newBuilder()
+              io.grpc.MethodDescriptor.<com.voiceorder.orderservice.AudioOrderRequest, com.voiceorder.orderservice.AudioOrderResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ProcessAudioOrder"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest.getDefaultInstance()))
+                  com.voiceorder.orderservice.AudioOrderRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse.getDefaultInstance()))
+                  com.voiceorder.orderservice.AudioOrderResponse.getDefaultInstance()))
               .setSchemaDescriptor(new OrderServiceMethodDescriptorSupplier("ProcessAudioOrder"))
               .build();
         }
@@ -96,8 +96,8 @@ public final class OrderServiceGrpc {
 
     /**
      */
-    default void processAudioOrder(com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest request,
-        io.grpc.stub.StreamObserver<com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse> responseObserver) {
+    default void processAudioOrder(com.voiceorder.orderservice.AudioOrderRequest request,
+        io.grpc.stub.StreamObserver<com.voiceorder.orderservice.AudioOrderResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getProcessAudioOrderMethod(), responseObserver);
     }
   }
@@ -131,8 +131,8 @@ public final class OrderServiceGrpc {
 
     /**
      */
-    public void processAudioOrder(com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest request,
-        io.grpc.stub.StreamObserver<com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse> responseObserver) {
+    public void processAudioOrder(com.voiceorder.orderservice.AudioOrderRequest request,
+        io.grpc.stub.StreamObserver<com.voiceorder.orderservice.AudioOrderResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getProcessAudioOrderMethod(), getCallOptions()), request, responseObserver);
     }
@@ -156,7 +156,7 @@ public final class OrderServiceGrpc {
 
     /**
      */
-    public com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse processAudioOrder(com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest request) {
+    public com.voiceorder.orderservice.AudioOrderResponse processAudioOrder(com.voiceorder.orderservice.AudioOrderRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getProcessAudioOrderMethod(), getCallOptions(), request);
     }
@@ -180,8 +180,8 @@ public final class OrderServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse> processAudioOrder(
-        com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<com.voiceorder.orderservice.AudioOrderResponse> processAudioOrder(
+        com.voiceorder.orderservice.AudioOrderRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getProcessAudioOrderMethod(), getCallOptions()), request);
     }
@@ -207,8 +207,8 @@ public final class OrderServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_PROCESS_AUDIO_ORDER:
-          serviceImpl.processAudioOrder((com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest) request,
-              (io.grpc.stub.StreamObserver<com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse>) responseObserver);
+          serviceImpl.processAudioOrder((com.voiceorder.orderservice.AudioOrderRequest) request,
+              (io.grpc.stub.StreamObserver<com.voiceorder.orderservice.AudioOrderResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -232,8 +232,8 @@ public final class OrderServiceGrpc {
           getProcessAudioOrderMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderRequest,
-              com.voiceorder.orderservice.OrderServiceOuterClass.AudioOrderResponse>(
+              com.voiceorder.orderservice.AudioOrderRequest,
+              com.voiceorder.orderservice.AudioOrderResponse>(
                 service, METHODID_PROCESS_AUDIO_ORDER)))
         .build();
   }
@@ -244,7 +244,7 @@ public final class OrderServiceGrpc {
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return com.voiceorder.orderservice.OrderServiceOuterClass.getDescriptor();
+      return com.voiceorder.orderservice.OrderServiceProto.getDescriptor();
     }
 
     @java.lang.Override
