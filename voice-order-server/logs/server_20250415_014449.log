@@ -1,0 +1,8 @@
+2025-04-15 01:44:49,109 - INFO - Starting gRPC server...
+2025-04-15 01:44:49,114 - INFO - Server started on port 50051
+2025-04-15 01:44:58,776 - INFO - Processing order text with Gemini: 'bao hoa mai 7 cái'
+2025-04-15 01:45:01,133 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'bao hoa mai', 'quantity': 7}]}
+2025-04-15 01:45:44,444 - WARNING - Google Speech Recognition could not understand audio with Vietnamese
+2025-04-15 01:45:44,702 - WARNING - Google Speech Recognition could not understand audio with English
+2025-04-15 01:45:44,703 - INFO - Processing order text with Gemini: 'Không thể nhận dạng giọng nói'
+2025-04-15 01:45:45,734 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'Không thể nhận dạng giọng nói', 'quantity': 1}]}

@@ -1,0 +1,7 @@
+2025-04-15 01:43:18,054 - INFO - Starting gRPC server...
+2025-04-15 01:43:18,060 - INFO - Server started on port 50051
+2025-04-15 01:43:34,705 - INFO - Received connection from client: ipv4:127.0.0.1:60698
+2025-04-15 01:43:34,706 - INFO - Received WAV audio data, length: 55758 bytes
+2025-04-15 01:43:34,707 - INFO - Adjusting for ambient noise...
+2025-04-15 01:43:36,504 - INFO - Processing order text with Gemini: 'sao hoa mai 7 cái'
+2025-04-15 01:43:42,700 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'sao hoa mai', 'quantity': 7}]}

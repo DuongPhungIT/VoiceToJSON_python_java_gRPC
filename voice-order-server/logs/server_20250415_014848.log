@@ -1,0 +1,6 @@
+2025-04-15 01:48:48,277 - INFO - Starting gRPC server...
+2025-04-15 01:48:48,282 - INFO - Server started on port 50051
+2025-04-15 01:49:01,773 - INFO - Processing order text with Gemini: 'sao hoa mai 8 cái'
+2025-04-15 01:49:04,960 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'sao hoa mai', 'quantity': 8}]}
+2025-04-15 01:49:55,544 - INFO - Processing order text with Gemini: 'sao Hoa Mai tán gái'
+2025-04-15 01:49:56,715 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'sao Hoa Mai tán gái', 'quantity': 1}]}

@@ -12,6 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.sound.sampled.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,19 +34,72 @@ public class OrderClient {
         logger.info("gRPC client initialized and connected to server at localhost:50051");
     }
 
+    private byte[] convertToWav(MultipartFile audioFile) throws IOException {
+        logger.info("Converting audio to WAV format using ffmpeg...");
+        
+        // Create temporary files
+        java.io.File tempInputFile = java.io.File.createTempFile("input_", ".webm");
+        java.io.File tempOutputFile = java.io.File.createTempFile("output_", ".wav");
+        
+        try {
+            // Save input file
+            audioFile.transferTo(tempInputFile);
+            logger.info("Saved input audio to: {}", tempInputFile.getAbsolutePath());
+            
+            // Build ffmpeg command
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                "ffmpeg",
+                "-i", tempInputFile.getAbsolutePath(),
+                "-acodec", "pcm_s16le",  // 16-bit PCM
+                "-ar", "16000",          // 16kHz sample rate
+                "-ac", "1",              // Mono
+                "-y",                    // Overwrite output file
+                tempOutputFile.getAbsolutePath()
+            );
+            
+            // Start ffmpeg process
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            
+            if (exitCode != 0) {
+                String error = new String(process.getErrorStream().readAllBytes());
+                logger.error("FFmpeg conversion failed: {}", error);
+                throw new IOException("Failed to convert audio to WAV format: " + error);
+            }
+            
+            // Read the converted WAV file
+            byte[] wavBytes = java.nio.file.Files.readAllBytes(tempOutputFile.toPath());
+            logger.info("Audio converted to WAV format, size: {} bytes", wavBytes.length);
+            
+            return wavBytes;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Audio conversion interrupted", e);
+        } finally {
+            // Clean up temporary files
+            if (tempInputFile.exists()) {
+                tempInputFile.delete();
+            }
+            if (tempOutputFile.exists()) {
+                tempOutputFile.delete();
+            }
+            logger.info("Cleaned up temporary files");
+        }
+    }
+
     public Map<String, Object> processOrder(MultipartFile audioFile) {
         try {
             logger.info("Processing order with audio file: {}", audioFile.getOriginalFilename());
             
-            // Get audio bytes directly
-            byte[] audioBytes = audioFile.getBytes();
-            logger.info("Audio file size: {} bytes", audioBytes.length);
+            // Convert audio to WAV format
+            byte[] wavBytes = convertToWav(audioFile);
+            logger.info("Audio converted to WAV format, size: {} bytes", wavBytes.length);
 
-            // Create gRPC request
+            // Create gRPC request with WAV data
             VoiceRequest request = VoiceRequest.newBuilder()
-                    .setAudioData(com.google.protobuf.ByteString.copyFrom(audioBytes))
+                    .setAudioData(com.google.protobuf.ByteString.copyFrom(wavBytes))
                     .build();
-            logger.info("Created gRPC request");
+            logger.info("Created gRPC request with WAV data");
 
             // Call gRPC service
             logger.info("Sending request to server...");

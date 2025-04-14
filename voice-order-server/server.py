@@ -8,11 +8,9 @@ import voice_service_pb2
 import voice_service_pb2_grpc
 import google.generativeai as genai
 from datetime import datetime
-import tempfile
-import subprocess
 import json
 from product_menu import get_menu 
-
+import re
 # Configure logging
 log_dir = "logs"
 if not os.path.exists(log_dir):
@@ -44,36 +42,19 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
         try:
             # Log client connection
             peer = context.peer()
-            logger.info("Received connection from client: %s", peer)
-            
-            logger.info("Audio data length: %d bytes", len(request.audio_data))
-            print("Audio data======:", request.audio_data)
             
             # Get audio data directly
             audio_data = request.audio_data
-            logger.info("Audio data length: %d bytes", len(audio_data))
             
-            # Save audio data to a temporary file for debugging
-            with open("temp_audio.webm", "wb") as f:
+            # Save audio data for debugging
+            with open("debug_audio.wav", "wb") as f:
                 f.write(audio_data)
-            logger.info("Saved audio data to temp_audio.webm")
-            
-            # Convert to WAV format
-            wav_data = self.convert_to_wav(audio_data)
-            logger.info("Converted to WAV format, length: %d bytes", len(wav_data))
-            
-            # Save WAV data for debugging
-            with open("temp_audio.wav", "wb") as f:
-                f.write(wav_data)
-            logger.info("Saved WAV data to temp_audio.wav")
             
             # Convert audio to text
-            text = self.audio_to_text(wav_data)
-            logger.info("Converted audio to text: '%s'", text)
+            text = self.audio_to_text(audio_data)
             
             # Process the order
             products, products_error = self.process_order(text)
-            logger.info("Processed order - Products: %s, Errors: %s", products, products_error)
             
             # Create response
             response = voice_service_pb2.VoiceResponse()
@@ -105,88 +86,32 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
                 message=str(e)
             )
 
-    def convert_to_wav(self, audio_data):
-        try:
-            logger.info("Starting audio conversion")
-            # Create a temporary file to store the input audio
-            with tempfile.NamedTemporaryFile(suffix='.webm', delete=False) as input_file:
-                input_file.write(audio_data)
-                input_file.flush()
-                input_path = input_file.name
-                logger.info("Saved input audio to: %s", input_path)
-
-            # Create a temporary file for the output WAV
-            output_path = input_path.replace('.webm', '.wav')
-            logger.info("Output WAV will be saved to: %s", output_path)
-
-            # Convert using ffmpeg
-            cmd = [
-                'ffmpeg', '-i', input_path,
-                '-acodec', 'pcm_s16le',  # 16-bit PCM
-                '-ar', '16000',          # 16kHz sample rate
-                '-ac', '1',              # Mono
-                '-y',                    # Overwrite output file
-                output_path
-            ]
-            logger.info("Running ffmpeg command: %s", ' '.join(cmd))
-            
-            result = subprocess.run(cmd, capture_output=True, text=True)
-            if result.returncode != 0:
-                logger.error("FFmpeg conversion failed: %s", result.stderr)
-                raise Exception("Failed to convert audio to WAV format")
-
-            # Read the converted WAV file
-            with open(output_path, 'rb') as wav_file:
-                wav_data = wav_file.read()
-                logger.info("Successfully converted to WAV format, length: %d bytes", len(wav_data))
-
-            # Clean up temporary files
-            os.unlink(input_path)
-            os.unlink(output_path)
-            
-            return wav_data
-        except Exception as e:
-            logger.error("Error converting audio: %s", str(e), exc_info=True)
-            raise
-
     def audio_to_text(self, audio_data):
         try:
-            logger.info("Starting speech recognition")
-            logger.info("Audio data type: %s", type(audio_data))
-            logger.info("Audio data length: %d bytes", len(audio_data))
-            
             # Save audio data for debugging
             with open("debug_audio.wav", "wb") as f:
                 f.write(audio_data)
-            logger.info("Saved audio data to debug_audio.wav for inspection")
             
             audio_file = io.BytesIO(audio_data)
             with sr.AudioFile(audio_file) as source:
                 # Adjust for ambient noise
-                logger.info("Adjusting for ambient noise...")
                 self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
                 
                 # Record the audio
-                logger.info("Recording audio...")
                 audio = self.recognizer.record(source)
-                logger.info("Audio recorded successfully")
                 
                 # Try to recognize the speech
-                logger.info("Recognizing speech...")
                 try:
                     # Try with Vietnamese first
                     text = self.recognizer.recognize_google(audio, language="vi-VN")
-                    logger.info("Speech recognition completed with Vietnamese: '%s'", text)
                     return text
                 except sr.UnknownValueError:
-                    logger.warning("Google Speech Recognition could not understand audio with Vietnamese")
                     try:
                         # Try with English as fallback
                         text = self.recognizer.recognize_google(audio, language="en-US")
                         logger.info("Speech recognition completed with English: '%s'", text)
                         return text
                     except sr.UnknownValueError:
-                        logger.warning("Google Speech Recognition could not understand audio with English")
                         return "Không thể nhận dạng giọng nói"
                 except sr.RequestError as e:
                     logger.error("Could not request results from Google Speech Recognition service: %s", str(e))
@@ -197,9 +122,9 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
 
     def process_order(self, text):
         try:
-            logger.info("Processing order text: '%s'", text)
+            logger.info("Processing order text with Gemini: '%s'", text)
             
-            # Use Gemini to process the text
+            # Create prompt for Gemini
             prompt = f"""
             Bạn là một hệ thống xử lý đơn hàng bánh bao. Nhiệm vụ của bạn là phân tích đơn hàng và tìm sản phẩm chính xác trong menu.
             Bạn phải trả về danh sách sản phẩm theo format JSON.
@@ -245,86 +170,38 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
             - "Cho tôi một cái bánh bao mỹ hương bí đỏ sữa tươi 300g và 3 cái bánh bao thọ phát đậu xanh 280g" -> {{"products": [{{"name": "Bánh bao Mỹ Hương Bí Đỏ Sữa Tươi 300g(25gx12)", "quantity": 1, "sap_code": "5000072"}}, {{"name": "Bánh Bao Thọ Phát Đậu Xanh 280g (70gx4)", "quantity": 3, "sap_code": "5000082"}}], "productsError": []}}
             - "Tôi muốn 2 cái bánh bao thọ phát thập cẩm 2 cút 600g và 1 cái bánh bao thọ phát gà nướng phô mai 400g" -> {{"products": [{{"name": "Bánh bao Thọ Phát Thập Cẩm 2 Cút 600g (150gx4)", "quantity": 2, "sap_code": "5000190"}}, {{"name": "Bánh Bao Thọ Phát Gà Nướng Phô Mai 400g (100gx4)", "quantity": 1, "sap_code": "5000282"}}], "productsError": []}}
             - "Cho tôi 1 cái bánh bao không có trong menu" -> {{"products": [], "productsError": [{{"name": "bánh bao không có trong menu", "quantity": 1}}]}}
+            - "Bao hoa cúc 7 cái" -> {{"products": [], "productsError": [{{"name": "Bao hoa cúc", "quantity": 7}}]}}
             
             Ví dụ với từ khóa:
             - "Tôi muốn 2 cái bánh bao heo 1 cút" -> {{"products": [{{"name": "Bánh bao Thọ Phát Thịt Heo 1 Cút 480g (120gx4)", "quantity": 2, "sap_code": "5000154"}}], "productsError": []}}
             - "Cho tôi một cái bánh bao bí đỏ và 3 cái bánh bao đậu xanh" -> {{"products": [{{"name": "Bánh bao Mỹ Hương Bí Đỏ Sữa Tươi 300g(25gx12)", "quantity": 1, "sap_code": "5000072"}}, {{"name": "Bánh Bao Thọ Phát Đậu Xanh 280g (70gx4)", "quantity": 3, "sap_code": "5000082"}}], "productsError": []}}
             - "Tôi muốn 2 cái bánh bao thập cẩm và 1 cái bánh bao gà" -> {{"products": [{{"name": "Bánh bao Thọ Phát Thập Cẩm 2 Cút 600g (150gx4)", "quantity": 2, "sap_code": "5000190"}}, {{"name": "Bánh Bao Thọ Phát Gà Nướng Phô Mai 400g (100gx4)", "quantity": 1, "sap_code": "5000282"}}], "productsError": []}}
             - "Cho tôi 1 cái bánh bao không có trong menu" -> {{"products": [], "productsError": [{{"name": "bánh bao không có trong menu", "quantity": 1}}]}}
+            - "Bao hoa cúc 7 cái" -> {{"products": [], "productsError": [{{"name": "Bao hoa cúc", "quantity": 7}}]}}
             """
             
+            # Call Gemini API
             response = model.generate_content(prompt)
-            logger.info("Received response from Gemini: %s", response.text)
             
             try:
-                # Parse Gemini response
-                result = json.loads(response.text)
+                # Parse JSON response
+                text_cleaned = re.sub(r'```(?:json)?', '', response.text)
+                result = json.loads(text_cleaned)
+                logger.info("Parsed JSON response: %s", result)
+                
+                # Extract products and error products
                 products = result.get("products", [])
-                products_error = result.get("products_error", [])
+                products_error = result.get("productsError", [])
                 
-                logger.info("Order processing completed - Products: %s, Errors: %s", products, products_error)
                 return products, products_error
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
                 logger.error("Failed to parse Gemini response as JSON: %s", response.text)
-                # Fallback to original processing if Gemini fails
-                return self._process_order_fallback(text)
-                
+                logger.error("JSON parse error: %s", str(e))
+                return [], [{"name": "UNKNOWN", "quantity": 1}]
+            
         except Exception as e:
             logger.error("Error processing order with Gemini: %s", str(e), exc_info=True)
-            # Fallback to original processing if Gemini fails
-            return self._process_order_fallback(text)
-
-    def _process_order_fallback(self, text):
-        """Fallback method for processing orders when Gemini fails"""
-        try:
-            logger.info("Using fallback method to process order text: '%s'", text)
-            products = []
-            products_error = []
-            
-            # Convert text to lowercase for case-insensitive matching
-            text = text.lower()
-            
-            # Split text into words
-            words = text.split()
-            logger.info("Split text into words: %s", words)
-            
-            i = 0
-            while i < len(words):
-                # Look for quantity
-                if words[i].isdigit():
-                    quantity = int(words[i])
-                    logger.info("Found quantity: %d", quantity)
-                    
-                    # Look for product name
-                    product_name = None
-                    for name in self.menu.keys():
-                        if " ".join(words[i+1:i+1+len(name.split())]).lower() == name:
-                            product_name = name
-                            logger.info("Found product name: %s", product_name)
-                            break
-                    
-                    if product_name:
-                        products.append({
-                            "name": product_name,
-                            "sap_code": self.menu[product_name],
-                            "quantity": quantity
-                        })
-                        i += 1 + len(product_name.split())
-                    else:
-                        # If product not found, add to error list
-                        products_error.append({
-                            "name": " ".join(words[i+1:i+3]),
-                            "quantity": quantity
-                        })
-                        i += 3
-                else:
-                    i += 1
-            
-            logger.info("Fallback order processing completed - Products: %s, Errors: %s", products, products_error)
-            return products, products_error
-        except Exception as e:
-            logger.error("Error in fallback order processing: %s", str(e), exc_info=True)
-            raise
+            return [], [{"name": "UNKNOWN", "quantity": 1}]
 
 def serve():
     try:
