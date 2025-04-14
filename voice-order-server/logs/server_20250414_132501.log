@@ -1,0 +1,29 @@
+2025-04-14 13:25:01,122 - INFO - Starting gRPC server...
+2025-04-14 13:25:01,126 - INFO - VoiceServiceServicer initialized with menu: {'coca cola': '1001', 'pepsi': '1002', '7up': '1003', 'fanta': '1004', 'sprite': '1005', 'mirinda': '1006', 'sting': '1007', 'number one': '1008', 'revive': '1009', 'tiger': '1010', 'heineken': '1011', 'saigon': '1012', '333': '1013', 'huda': '1014', 'larue': '1015', 'hanoi': '1016', 'bia hơi': '1017', 'bia tươi': '1017', 'bia đen': '1018', 'bia nâu': '1019', 'bia đỏ': '1020', 'bia vàng': '1021', 'bia trắng': '1022', 'bia xanh': '1023', 'bia tím': '1024', 'bia hồng': '1025', 'bia cam': '1026', 'bia lục': '1027', 'bia lam': '1028', 'bia chai': '1029', 'bia lon': '1030', 'bia thùng': '1031', 'bia két': '1032', 'bia bock': '1033', 'bia pilsner': '1034', 'bia lager': '1035', 'bia ale': '1036', 'bia stout': '1037', 'bia porter': '1038', 'bia wheat': '1039', 'bia ipa': '1040', 'bia apa': '1050'}
+2025-04-14 13:25:01,128 - INFO - Server started on port 50051
+2025-04-14 13:25:07,428 - INFO - Received connection from client: ipv4:127.0.0.1:56247
+2025-04-14 13:25:07,429 - INFO - Audio data length: 23503 bytes
+2025-04-14 13:25:07,429 - INFO - Audio data length: 23503 bytes
+2025-04-14 13:25:07,429 - INFO - Saved audio data to temp_audio.webm
+2025-04-14 13:25:07,429 - INFO - Starting audio conversion
+2025-04-14 13:25:07,431 - INFO - Saved input audio to: /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmppmtyt0zg.webm
+2025-04-14 13:25:07,431 - INFO - Output WAV will be saved to: /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmppmtyt0zg.wav
+2025-04-14 13:25:07,432 - INFO - Running ffmpeg command: ffmpeg -i /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmppmtyt0zg.webm -acodec pcm_s16le -ar 16000 -ac 1 -y /var/folders/w6/8kx_1b2s1fq3c1gwx448gz040000gn/T/tmppmtyt0zg.wav
+2025-04-14 13:25:07,613 - INFO - Successfully converted to WAV format, length: 46158 bytes
+2025-04-14 13:25:07,614 - INFO - Converted to WAV format, length: 46158 bytes
+2025-04-14 13:25:07,614 - INFO - Saved WAV data to temp_audio.wav
+2025-04-14 13:25:07,614 - INFO - Starting speech recognition
+2025-04-14 13:25:07,614 - INFO - Audio data type: <class 'bytes'>
+2025-04-14 13:25:07,614 - INFO - Audio data length: 46158 bytes
+2025-04-14 13:25:07,615 - INFO - Saved audio data to debug_audio.wav for inspection
+2025-04-14 13:25:07,615 - INFO - Adjusting for ambient noise...
+2025-04-14 13:25:07,615 - INFO - Recording audio...
+2025-04-14 13:25:07,615 - INFO - Audio recorded successfully
+2025-04-14 13:25:07,615 - INFO - Recognizing speech...
+2025-04-14 13:25:08,122 - INFO - Speech recognition completed with Vietnamese: 'bánh bao 5'
+2025-04-14 13:25:08,122 - INFO - Converted audio to text: 'bánh bao 5'
+2025-04-14 13:25:08,122 - INFO - Processing order text: 'bánh bao 5'
+2025-04-14 13:25:08,122 - INFO - Split text into words: ['bánh', 'bao', '5']
+2025-04-14 13:25:08,122 - INFO - Found quantity: 5
+2025-04-14 13:25:08,122 - INFO - Order processing completed - Products: [], Errors: [{'name': '', 'quantity': 5}]
+2025-04-14 13:25:08,122 - INFO - Processed order - Products: [], Errors: [{'name': '', 'quantity': 5}]

@@ -1,4 +1,3 @@
-import base64
 import io
 import logging
 import os
@@ -8,11 +7,10 @@ import grpc
 import voice_service_pb2
 import voice_service_pb2_grpc
 import google.generativeai as genai
-import tempfile
-import subprocess
-import json
 import wave
 from datetime import datetime
+import tempfile
+import subprocess
 
 # Configure logging
 log_dir = "logs"
@@ -154,19 +152,43 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
     def convert_to_wav(self, audio_data):
         try:
             logger.info("Starting audio conversion")
-            # Create a BytesIO object to hold the audio data
-            audio_file = io.BytesIO(audio_data)
+            # Create a temporary file to store the input audio
+            with tempfile.NamedTemporaryFile(suffix='.webm', delete=False) as input_file:
+                input_file.write(audio_data)
+                input_file.flush()
+                input_path = input_file.name
+                logger.info("Saved input audio to: %s", input_path)
+
+            # Create a temporary file for the output WAV
+            output_path = input_path.replace('.webm', '.wav')
+            logger.info("Output WAV will be saved to: %s", output_path)
+
+            # Convert using ffmpeg
+            cmd = [
+                'ffmpeg', '-i', input_path,
+                '-acodec', 'pcm_s16le',  # 16-bit PCM
+                '-ar', '16000',          # 16kHz sample rate
+                '-ac', '1',              # Mono
+                '-y',                    # Overwrite output file
+                output_path
+            ]
+            logger.info("Running ffmpeg command: %s", ' '.join(cmd))
             
-            # Create a WAV file
-            wav_file = io.BytesIO()
-            with wave.open(wav_file, 'wb') as wf:
-                wf.setnchannels(1)  # Mono
-                wf.setsampwidth(2)  # 16-bit
-                wf.setframerate(16000)  # 16kHz
-                wf.writeframes(audio_data)
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                logger.error("FFmpeg conversion failed: %s", result.stderr)
+                raise Exception("Failed to convert audio to WAV format")
+
+            # Read the converted WAV file
+            with open(output_path, 'rb') as wav_file:
+                wav_data = wav_file.read()
+                logger.info("Successfully converted to WAV format, length: %d bytes", len(wav_data))
+
+            # Clean up temporary files
+            os.unlink(input_path)
+            os.unlink(output_path)
             
-            logger.info("Audio conversion completed successfully")
-            return wav_file.getvalue()
+            return wav_data
         except Exception as e:
             logger.error("Error converting audio: %s", str(e), exc_info=True)
             raise
@@ -174,25 +196,42 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
     def audio_to_text(self, audio_data):
         try:
             logger.info("Starting speech recognition")
+            logger.info("Audio data type: %s", type(audio_data))
+            logger.info("Audio data length: %d bytes", len(audio_data))
+            
+            # Save audio data for debugging
+            with open("debug_audio.wav", "wb") as f:
+                f.write(audio_data)
+            logger.info("Saved audio data to debug_audio.wav for inspection")
+            
             audio_file = io.BytesIO(audio_data)
             with sr.AudioFile(audio_file) as source:
                 # Adjust for ambient noise
                 logger.info("Adjusting for ambient noise...")
-                self.recognizer.adjust_for_ambient_noise(source)
+                self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
                 
                 # Record the audio
                 logger.info("Recording audio...")
                 audio = self.recognizer.record(source)
+                logger.info("Audio recorded successfully")
                 
                 # Try to recognize the speech
                 logger.info("Recognizing speech...")
                 try:
+                    # Try with Vietnamese first
                     text = self.recognizer.recognize_google(audio, language="vi-VN")
-                    logger.info("Speech recognition completed: '%s'", text)
+                    logger.info("Speech recognition completed with Vietnamese: '%s'", text)
                     return text
                 except sr.UnknownValueError:
-                    logger.warning("Google Speech Recognition could not understand audio")
-                    return "Không thể nhận dạng giọng nói"
+                    logger.warning("Google Speech Recognition could not understand audio with Vietnamese")
+                    try:
+                        # Try with English as fallback
+                        text = self.recognizer.recognize_google(audio, language="en-US")
+                        logger.info("Speech recognition completed with English: '%s'", text)
+                        return text
+                    except sr.UnknownValueError:
+                        logger.warning("Google Speech Recognition could not understand audio with English")
+                        return "Không thể nhận dạng giọng nói"
                 except sr.RequestError as e:
                     logger.error("Could not request results from Google Speech Recognition service: %s", str(e))
                     return "Lỗi kết nối đến dịch vụ nhận dạng giọng nói"

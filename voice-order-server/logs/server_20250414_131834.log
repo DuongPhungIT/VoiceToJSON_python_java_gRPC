@@ -1,0 +1,39 @@
+2025-04-14 13:18:34,907 - INFO - Starting gRPC server...
+2025-04-14 13:18:34,910 - INFO - VoiceServiceServicer initialized with menu: {'coca cola': '1001', 'pepsi': '1002', '7up': '1003', 'fanta': '1004', 'sprite': '1005', 'mirinda': '1006', 'sting': '1007', 'number one': '1008', 'revive': '1009', 'tiger': '1010', 'heineken': '1011', 'saigon': '1012', '333': '1013', 'huda': '1014', 'larue': '1015', 'hanoi': '1016', 'bia hơi': '1017', 'bia tươi': '1017', 'bia đen': '1018', 'bia nâu': '1019', 'bia đỏ': '1020', 'bia vàng': '1021', 'bia trắng': '1022', 'bia xanh': '1023', 'bia tím': '1024', 'bia hồng': '1025', 'bia cam': '1026', 'bia lục': '1027', 'bia lam': '1028', 'bia chai': '1029', 'bia lon': '1030', 'bia thùng': '1031', 'bia két': '1032', 'bia bock': '1033', 'bia pilsner': '1034', 'bia lager': '1035', 'bia ale': '1036', 'bia stout': '1037', 'bia porter': '1038', 'bia wheat': '1039', 'bia ipa': '1040', 'bia apa': '1050'}
+2025-04-14 13:18:34,913 - INFO - Server started on port 50051
+2025-04-14 13:18:38,936 - INFO - Received connection from client: ipv4:127.0.0.1:54459
+2025-04-14 13:18:38,937 - INFO - Audio data length: 4126 bytes
+2025-04-14 13:18:38,937 - INFO - Audio data length: 4126 bytes
+2025-04-14 13:18:38,937 - INFO - Saved audio data to temp_audio.webm
+2025-04-14 13:18:38,937 - INFO - Starting audio conversion
+2025-04-14 13:18:38,937 - INFO - Audio conversion completed successfully
+2025-04-14 13:18:38,938 - INFO - Converted to WAV format, length: 4170 bytes
+2025-04-14 13:18:38,938 - INFO - Saved WAV data to temp_audio.wav
+2025-04-14 13:18:38,938 - INFO - Starting speech recognition
+2025-04-14 13:18:38,939 - INFO - Adjusting for ambient noise...
+2025-04-14 13:18:38,939 - INFO - Recording audio...
+2025-04-14 13:18:38,939 - INFO - Recognizing speech...
+2025-04-14 13:18:39,209 - WARNING - Google Speech Recognition could not understand audio
+2025-04-14 13:18:39,210 - INFO - Converted audio to text: 'Không thể nhận dạng giọng nói'
+2025-04-14 13:18:39,210 - INFO - Processing order text: 'Không thể nhận dạng giọng nói'
+2025-04-14 13:18:39,210 - INFO - Split text into words: ['không', 'thể', 'nhận', 'dạng', 'giọng', 'nói']
+2025-04-14 13:18:39,210 - INFO - Order processing completed - Products: [], Errors: []
+2025-04-14 13:18:39,210 - INFO - Processed order - Products: [], Errors: []
+2025-04-14 13:18:47,918 - INFO - Received connection from client: ipv4:127.0.0.1:54459
+2025-04-14 13:18:47,918 - INFO - Audio data length: 27385 bytes
+2025-04-14 13:18:47,918 - INFO - Audio data length: 27385 bytes
+2025-04-14 13:18:47,919 - INFO - Saved audio data to temp_audio.webm
+2025-04-14 13:18:47,920 - INFO - Starting audio conversion
+2025-04-14 13:18:47,920 - INFO - Audio conversion completed successfully
+2025-04-14 13:18:47,920 - INFO - Converted to WAV format, length: 27429 bytes
+2025-04-14 13:18:47,920 - INFO - Saved WAV data to temp_audio.wav
+2025-04-14 13:18:47,920 - INFO - Starting speech recognition
+2025-04-14 13:18:47,921 - INFO - Adjusting for ambient noise...
+2025-04-14 13:18:47,921 - INFO - Recording audio...
+2025-04-14 13:18:47,921 - INFO - Recognizing speech...
+2025-04-14 13:18:48,180 - WARNING - Google Speech Recognition could not understand audio
+2025-04-14 13:18:48,181 - INFO - Converted audio to text: 'Không thể nhận dạng giọng nói'
+2025-04-14 13:18:48,181 - INFO - Processing order text: 'Không thể nhận dạng giọng nói'
+2025-04-14 13:18:48,181 - INFO - Split text into words: ['không', 'thể', 'nhận', 'dạng', 'giọng', 'nói']
+2025-04-14 13:18:48,181 - INFO - Order processing completed - Products: [], Errors: []
+2025-04-14 13:18:48,181 - INFO - Processed order - Products: [], Errors: []
