@@ -443,7 +443,6 @@
                             });
 
                             const data = await response.json();
-                            console.log('data==============',data)
                             
                             if (data.error) {
                                 hideLoading();
@@ -523,8 +522,8 @@
             const productsList = document.getElementById('productsList');
             productsList.innerHTML = '';
 
-            if (data.products && data.products.length > 0) {
-                data.products.forEach(product => {
+            if (data.products && data.products.length > 0 || data.productsError && data.productsError.length > 0) {
+                data.products && data.products.length > 0 && data.products.forEach(product => {
                     const productDiv = document.createElement('div');
                     productDiv.className = 'product-item mb-3 p-3 border rounded';
                     productDiv.innerHTML = `
@@ -542,6 +541,7 @@
                 });
 
                 // Cập nhật thông tin đơn hàng
+                document.getElementById('questionText').innerHTML = data.transcript;
                 document.getElementById('totalItems').textContent = data.products.length;
                 document.getElementById('orderStatus').textContent = 'Đã xác nhận';
                 document.getElementById('createdAt').textContent = new Date().toLocaleString();

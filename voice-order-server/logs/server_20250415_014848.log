@@ -4,3 +4,9 @@
 2025-04-15 01:49:04,960 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'sao hoa mai', 'quantity': 8}]}
 2025-04-15 01:49:55,544 - INFO - Processing order text with Gemini: 'sao Hoa Mai tán gái'
 2025-04-15 01:49:56,715 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'sao Hoa Mai tán gái', 'quantity': 1}]}
+2025-04-15 01:54:29,292 - INFO - Processing order text with Gemini: 'Không thể nhận dạng giọng nói'
+2025-04-15 01:54:31,796 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'Không thể nhận dạng giọng nói', 'quantity': 1}]}
+2025-04-15 01:56:16,277 - INFO - Processing order text with Gemini: 'bao hoa mai 8'
+2025-04-15 01:56:17,368 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'bao hoa mai', 'quantity': 8}]}
+2025-04-15 01:57:39,584 - INFO - Processing order text with Gemini: 'bao hoa mai 8 cái'
+2025-04-15 01:57:40,722 - INFO - Parsed JSON response: {'products': [], 'productsError': [{'name': 'bao hoa mai', 'quantity': 8}]}
