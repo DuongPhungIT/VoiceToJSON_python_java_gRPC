@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Order Result</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Result - Voice Order System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -19,48 +21,69 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="mb-4">Order Result</h1>
-        
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Status</h5>
-                <p class="card-text" th:class="${status == 'SUCCESS' ? 'status-success' : 'status-error'}" 
-                   th:text="${status}">Status</p>
-                <p class="card-text" th:text="${message}">Message</p>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="text-center">Order Result</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Transcript Section -->
+                        <div class="mb-4">
+                            <h4>What you said:</h4>
+                            <div class="alert alert-info">
+                                <p th:text="${result.transcript}">Transcript will appear here</p>
+                            </div>
+                        </div>
+
+                        <!-- Products Section -->
+                        <div class="mb-4">
+                            <h4>Products:</h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>SAP Code</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="product : ${result.products}">
+                                        <td th:text="${product.name}">Product Name</td>
+                                        <td th:text="${product.sapCode}">SAP Code</td>
+                                        <td th:text="${product.quantity}">Quantity</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Error Products Section -->
+                        <div th:if="${not #lists.isEmpty(result.productsError)}" class="mb-4">
+                            <h4>Products Not Found:</h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="product : ${result.productsError}">
+                                        <td th:text="${product.name}">Product Name</td>
+                                        <td th:text="${product.quantity}">Quantity</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="/" class="btn btn-primary">Back to Home</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="card mb-4" th:if="${not #lists.isEmpty(products)}">
-            <div class="card-body">
-                <h5 class="card-title">Valid Products</h5>
-                <ul class="list-group">
-                    <li class="list-group-item" th:each="product : ${products}">
-                        <span th:text="${product.name}">Product Name</span>
-                        (SAP: <span th:text="${product.sapCode}">SAP Code</span>)
-                        x <span th:text="${product.quantity}">Quantity</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="card mb-4" th:if="${not #lists.isEmpty(errors)}">
-            <div class="card-body">
-                <h5 class="card-title">Products with Errors</h5>
-                <ul class="list-group">
-                    <li class="list-group-item" th:each="error : ${errors}">
-                        <span th:text="${error.name}">Product Name</span>
-                        x <span th:text="${error.quantity}">Quantity</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="alert alert-danger" th:if="${error != null}" th:text="${error}">
-            Error message
-        </div>
-
-        <a href="/" class="btn btn-primary">Back to Home</a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

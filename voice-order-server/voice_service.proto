@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package voiceorder.orderservice;
+
+option java_multiple_files = true;
+option java_package = "com.voiceorder.orderservice";
+option java_outer_classname = "VoiceServiceProto";
+
+service VoiceService {
+  rpc ProcessVoice(VoiceRequest) returns (VoiceResponse) {}
+}
+
+message VoiceRequest {
+  bytes audio_data = 1;
+}
+
+message Product {
+  string name = 1;
+  string sap_code = 2;
+  int32 quantity = 3;
+}
+
+message ProductError {
+  string name = 1;
+  int32 quantity = 2;
+}
+
+message VoiceResponse {
+  string status = 1;
+  string message = 2;
+  string transcript = 3;
+  repeated Product products = 4;
+  repeated ProductError products_error = 5;
+} 
