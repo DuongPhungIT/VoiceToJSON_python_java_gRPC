@@ -7,11 +7,11 @@ import grpc
 import voice_service_pb2
 import voice_service_pb2_grpc
 import google.generativeai as genai
-import wave
 from datetime import datetime
 import tempfile
 import subprocess
 import json
+from product_menu import get_menu 
 
 # Configure logging
 log_dir = "logs"
@@ -30,61 +30,15 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configure Gemini
-genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
-model = genai.GenerativeModel('gemini-pro')
-
-# Menu items with SAP codes
-MENU_ITEMS = {
-    "coca cola": "1001",
-    "pepsi": "1002",
-    "7up": "1003",
-    "fanta": "1004",
-    "sprite": "1005",
-    "mirinda": "1006",
-    "sting": "1007",
-    "number one": "1008",
-    "revive": "1009",
-    "tiger": "1010",
-    "heineken": "1011",
-    "saigon": "1012",
-    "333": "1013",
-    "huda": "1014",
-    "larue": "1015",
-    "hanoi": "1016",
-    "bia hơi": "1017",
-    "bia tươi": "1017",
-    "bia đen": "1018",
-    "bia nâu": "1019",
-    "bia đỏ": "1020",
-    "bia vàng": "1021",
-    "bia trắng": "1022",
-    "bia xanh": "1023",
-    "bia tím": "1024",
-    "bia hồng": "1025",
-    "bia cam": "1026",
-    "bia lục": "1027",
-    "bia lam": "1028",
-    "bia chai": "1029",
-    "bia lon": "1030",
-    "bia thùng": "1031",
-    "bia két": "1032",
-    "bia bock": "1033",
-    "bia pilsner": "1034",
-    "bia lager": "1035",
-    "bia ale": "1036",
-    "bia stout": "1037",
-    "bia porter": "1038",
-    "bia wheat": "1039",
-    "bia ipa": "1040",
-    "bia apa": "1050"
-}
+GEMINI_API_KEY="AIzaSyC7aoIVhPcI8lJHEIfku-QKJPG-1BAOZBc"
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
     def __init__(self):
         super().__init__()  # Call parent class constructor
         self.recognizer = sr.Recognizer()
-        self.menu = MENU_ITEMS
-        logger.info("VoiceServiceServicer initialized with menu: %s", self.menu)
+        self.menu = get_menu()  # Call get_menu() function to get menu items
 
     def ProcessVoice(self, request, context):
         try:
@@ -93,6 +47,7 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
             logger.info("Received connection from client: %s", peer)
             
             logger.info("Audio data length: %d bytes", len(request.audio_data))
+            print("Audio data======:", request.audio_data)
             
             # Get audio data directly
             audio_data = request.audio_data
@@ -242,11 +197,28 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
 
     def process_order(self, text):
         try:
-            logger.info("Processing order text with Gemini: '%s'", text)
+            logger.info("Processing order text: '%s'", text)
             
             # Use Gemini to process the text
             prompt = f"""
-            Phân tích đơn hàng sau và trả về danh sách sản phẩm theo format JSON:
+            Bạn là một hệ thống xử lý đơn hàng bánh bao. Nhiệm vụ của bạn là phân tích đơn hàng và tìm sản phẩm chính xác trong menu.
+            Bạn phải trả về danh sách sản phẩm theo format JSON.
+            Lưu ý quan trọng:
+            1. Chỉ chấp nhận tên sản phẩm CHÍNH XÁC có trong menu (100% khớp)
+            2. Không chấp nhận tên gần giống, tên khác, thương hiệu khác, trọng lượng khác
+            3. Chuyển đổi số lượng từ chữ sang số:
+               - "một" -> 1, "hai" -> 2, ..., "chín" -> 9
+               - "mười" -> 10, "hai mươi" -> 20, ..., "chín mươi" -> 90
+               - "một trăm" -> 100, ..., "chín trăm" -> 900
+               - "một nghìn" -> 1000, ..., "chín nghìn" -> 9000
+               ...
+            4. Ưu tiên số lượng:
+               - Lấy số lượng gần nhất với từ "cái"
+               - Số đầu câu là số thứ tự, không phải số lượng
+               - Nếu không xác định được số lượng, mặc định là 1
+               - Số lượng phải là số nguyên dương
+            5. Nếu sản phẩm không tồn tại trong menu, đưa vào productsError
+            
             Đơn hàng: {text}
             
             Menu sản phẩm: {self.menu}
@@ -255,21 +227,32 @@ class VoiceServiceServicer(voice_service_pb2_grpc.VoiceServiceServicer):
             {{
                 "products": [
                     {{
-                        "name": "tên sản phẩm",
-                        "sap_code": "mã SAP",
-                        "quantity": số lượng
+                        "name": "Tên sản phẩm từ menu",
+                        "quantity": số_lượng,
+                        "sap_code": mã_sản_phẩm
                     }}
                 ],
-                "products_error": [
+                "productsError": [
                     {{
-                        "name": "tên sản phẩm không tìm thấy",
-                        "quantity": số lượng
+                        "name": "Tên sản phẩm không tìm thấy",
+                        "quantity": số_lượng
                     }}
                 ]
             }}
+            
+            Ví dụ:
+            - "Tôi muốn 2 cái bánh bao thọ phát thịt heo 1 cút 480g" -> {{"products": [{{"name": "Bánh bao Thọ Phát Thịt Heo 1 Cút 480g (120gx4)", "quantity": 2, "sap_code": "5000154"}}], "productsError": []}}
+            - "Cho tôi một cái bánh bao mỹ hương bí đỏ sữa tươi 300g và 3 cái bánh bao thọ phát đậu xanh 280g" -> {{"products": [{{"name": "Bánh bao Mỹ Hương Bí Đỏ Sữa Tươi 300g(25gx12)", "quantity": 1, "sap_code": "5000072"}}, {{"name": "Bánh Bao Thọ Phát Đậu Xanh 280g (70gx4)", "quantity": 3, "sap_code": "5000082"}}], "productsError": []}}
+            - "Tôi muốn 2 cái bánh bao thọ phát thập cẩm 2 cút 600g và 1 cái bánh bao thọ phát gà nướng phô mai 400g" -> {{"products": [{{"name": "Bánh bao Thọ Phát Thập Cẩm 2 Cút 600g (150gx4)", "quantity": 2, "sap_code": "5000190"}}, {{"name": "Bánh Bao Thọ Phát Gà Nướng Phô Mai 400g (100gx4)", "quantity": 1, "sap_code": "5000282"}}], "productsError": []}}
+            - "Cho tôi 1 cái bánh bao không có trong menu" -> {{"products": [], "productsError": [{{"name": "bánh bao không có trong menu", "quantity": 1}}]}}
+            
+            Ví dụ với từ khóa:
+            - "Tôi muốn 2 cái bánh bao heo 1 cút" -> {{"products": [{{"name": "Bánh bao Thọ Phát Thịt Heo 1 Cút 480g (120gx4)", "quantity": 2, "sap_code": "5000154"}}], "productsError": []}}
+            - "Cho tôi một cái bánh bao bí đỏ và 3 cái bánh bao đậu xanh" -> {{"products": [{{"name": "Bánh bao Mỹ Hương Bí Đỏ Sữa Tươi 300g(25gx12)", "quantity": 1, "sap_code": "5000072"}}, {{"name": "Bánh Bao Thọ Phát Đậu Xanh 280g (70gx4)", "quantity": 3, "sap_code": "5000082"}}], "productsError": []}}
+            - "Tôi muốn 2 cái bánh bao thập cẩm và 1 cái bánh bao gà" -> {{"products": [{{"name": "Bánh bao Thọ Phát Thập Cẩm 2 Cút 600g (150gx4)", "quantity": 2, "sap_code": "5000190"}}, {{"name": "Bánh Bao Thọ Phát Gà Nướng Phô Mai 400g (100gx4)", "quantity": 1, "sap_code": "5000282"}}], "productsError": []}}
+            - "Cho tôi 1 cái bánh bao không có trong menu" -> {{"products": [], "productsError": [{{"name": "bánh bao không có trong menu", "quantity": 1}}]}}
             """
             
-            logger.info("Sending prompt to Gemini: %s", prompt)
             response = model.generate_content(prompt)
             logger.info("Received response from Gemini: %s", response.text)
             
